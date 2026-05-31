@@ -7,10 +7,12 @@ import 'package:limen_domain/limen_domain.dart';
 import '../../../app/l10n/app_localizations.dart';
 import '../../../app/theme/tokens.dart';
 import '../../../core/audio/sound_controller.dart';
+import '../../../core/widgets/arc_progress.dart';
 import '../../../core/widgets/block_cursor.dart';
 import '../../../core/widgets/decode_text.dart';
 import '../../../core/widgets/glyph_atmosphere.dart';
 import '../../../core/widgets/pressable_scale.dart';
+import '../../session/session_controller.dart';
 import '../application/node_provider.dart';
 import '../application/progress_controller.dart';
 import '../application/submit_controller.dart';
@@ -78,12 +80,19 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
               child: nodeAsync.when(
                 loading: () => _SystemLine(l10n.loading),
-                error: (err, _) => _SystemLine(
-                  err is NodeException && err.code == ApiErrorCode.nodeLocked
-                      ? l10n.nodeLocked
-                      : l10n.networkDown,
-                  isError: true,
-                ),
+                error: (err, _) {
+                  final locked = err is NodeException &&
+                      err.code == ApiErrorCode.nodeLocked;
+                  return _ErrorState(
+                    message: locked ? l10n.nodeLocked : l10n.networkDown,
+                    onRetry: locked
+                        ? null
+                        : () {
+                            ref.invalidate(sessionProvider);
+                            ref.invalidate(nodeProvider(widget.nodeId));
+                          },
+                  );
+                },
                 data: (node) => _content(node, l10n),
               ),
             ),
@@ -161,11 +170,17 @@ class _PuzzleView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!bare) ...[
-            Text('LIMEN',
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge
-                    ?.copyWith(color: c.inkDim)),
+            Row(
+              children: [
+                Text('LIMEN',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge
+                        ?.copyWith(color: c.inkDim)),
+                const Spacer(),
+                const ArcProgress(),
+              ],
+            ),
             const SizedBox(height: 32),
           ] else
             const SizedBox(height: 8),
@@ -408,21 +423,65 @@ class _MuteButton extends ConsumerWidget {
   }
 }
 
-class _SystemLine extends StatelessWidget {
-  final String text;
-  final bool isError;
-  const _SystemLine(this.text, {this.isError = false});
+/// Estado de error con ruta de recuperación (regla `error-recovery`): los
+/// fallos de red ofrecen reintentar; los de progreso (nodo bloqueado) no.
+class _ErrorState extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+  const _ErrorState({required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     final c = context.c;
+    final l10n = AppL10n.of(context);
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: c.accentAlert),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 24),
+            PressableScale(
+              child: TextButton(
+                onPressed: onRetry,
+                style: TextButton.styleFrom(
+                  foregroundColor: c.accentSignal,
+                  minimumSize: const Size(48, 48),
+                ),
+                child: Text(
+                  l10n.retryAction,
+                  style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Línea de la voz del sistema (estado de carga).
+class _SystemLine extends StatelessWidget {
+  final String text;
+  const _SystemLine(this.text);
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Text(
         text,
         style: Theme.of(context)
             .textTheme
             .bodyLarge
-            ?.copyWith(color: isError ? c.accentAlert : c.inkDim),
+            ?.copyWith(color: context.c.inkDim),
       ),
     );
   }

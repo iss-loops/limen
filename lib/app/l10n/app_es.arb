@@ -34,5 +34,17 @@
   "@decodingLabel": { "description": "Etiqueta accesible mientras el texto se revela." },
 
   "soundToggle": "sonido",
-  "@soundToggle": { "description": "Etiqueta accesible del botón de silencio." }
+  "@soundToggle": { "description": "Etiqueta accesible del botón de silencio." },
+
+  "retryAction": "reintentar",
+  "@retryAction": { "description": "Reintentar tras un fallo de red." },
+
+  "arcProgress": "progreso: {done} de {total}",
+  "@arcProgress": {
+    "description": "Etiqueta accesible del indicador de progreso del arco.",
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
 }

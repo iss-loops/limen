@@ -164,6 +164,18 @@ abstract class AppL10n {
   /// In es, this message translates to:
   /// **'sonido'**
   String get soundToggle;
+
+  /// Reintentar tras un fallo de red.
+  ///
+  /// In es, this message translates to:
+  /// **'reintentar'**
+  String get retryAction;
+
+  /// Etiqueta accesible del indicador de progreso del arco.
+  ///
+  /// In es, this message translates to:
+  /// **'progreso: {done} de {total}'**
+  String arcProgress(int done, int total);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

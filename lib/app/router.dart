@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,13 +14,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) =>
-            const PuzzleScreen(nodeId: kEntryNodeId, bare: true),
+        pageBuilder: (context, state) => _ceremonialFade(
+          state,
+          const PuzzleScreen(nodeId: kEntryNodeId, bare: true),
+        ),
       ),
       GoRoute(
         path: '/node/:id',
-        builder: (context, state) =>
-            PuzzleScreen(nodeId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => _ceremonialFade(
+          state,
+          PuzzleScreen(nodeId: state.pathParameters['id']!),
+        ),
       ),
     ],
     redirect: (context, state) {
@@ -31,3 +36,22 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
   );
 });
+
+/// Transición ceremonial: desvanecido lento, nunca un slide alegre (README §3).
+/// Respeta reduce-motion (corte directo).
+CustomTransitionPage<void> _ceremonialFade(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 650),
+    reverseTransitionDuration: const Duration(milliseconds: 420),
+    child: child,
+    transitionsBuilder: (context, animation, secondary, child) {
+      final reduceMotion =
+          MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+      if (reduceMotion) return child;
+      final curved =
+          CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+      return FadeTransition(opacity: curved, child: child);
+    },
+  );
+}

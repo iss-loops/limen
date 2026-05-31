@@ -41,4 +41,12 @@ class AppL10nEs extends AppL10n {
 
   @override
   String get soundToggle => 'sonido';
+
+  @override
+  String get retryAction => 'reintentar';
+
+  @override
+  String arcProgress(int done, int total) {
+    return 'progreso: $done de $total';
+  }
 }
