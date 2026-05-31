@@ -8,6 +8,7 @@ import '../../../app/l10n/app_localizations.dart';
 import '../../../app/theme/tokens.dart';
 import '../../../core/widgets/block_cursor.dart';
 import '../../../core/widgets/decode_text.dart';
+import '../../../core/widgets/glyph_atmosphere.dart';
 import '../application/node_provider.dart';
 import '../application/progress_controller.dart';
 import '../application/submit_controller.dart';
@@ -54,9 +55,17 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
     final nodeAsync = ref.watch(nodeProvider(widget.nodeId));
     final l10n = AppL10n.of(context);
 
+    // La atmósfera glyph sube en el reveal y llega a su pico en el cierre.
+    final submission = ref.watch(submitProvider(widget.nodeId));
+    final ambient = (submission is SubmissionDone && submission.result.correct)
+        ? (submission.result.nextNodeId == null ? 1.0 : 0.55)
+        : 0.0;
+
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: GlyphAtmosphere(
+          intensity: ambient,
+          child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Padding(
@@ -73,6 +82,7 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
@@ -306,7 +316,7 @@ class _Revealed extends ConsumerWidget {
             ),
             child: DecodeText(
               narrative,
-              intensity: 1,
+              intensity: closing ? 1.0 : 0.6,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: c.accentGlyph,
                     height: 1.5,
