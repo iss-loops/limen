@@ -38,4 +38,7 @@ class AppL10nEs extends AppL10n {
 
   @override
   String get decodingLabel => 'descifrando';
+
+  @override
+  String get soundToggle => 'sonido';
 }

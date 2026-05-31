@@ -6,6 +6,7 @@ import 'package:limen_domain/limen_domain.dart';
 
 import '../../../app/l10n/app_localizations.dart';
 import '../../../app/theme/tokens.dart';
+import '../../../core/audio/sound_controller.dart';
 import '../../../core/widgets/block_cursor.dart';
 import '../../../core/widgets/decode_text.dart';
 import '../../../core/widgets/glyph_atmosphere.dart';
@@ -42,12 +43,14 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
     ref.read(submitProvider(widget.nodeId).notifier).submit(text);
   }
 
+  void _keystroke() => ref.read(soundControllerProvider).keystroke();
+
   @override
   Widget build(BuildContext context) {
     // Acorde de revelación (sonido básico) al acertar.
     ref.listen<SubmissionState>(submitProvider(widget.nodeId), (prev, next) {
       if (next is SubmissionDone && next.result.correct) {
-        SystemSound.play(SystemSoundType.alert);
+        ref.read(soundControllerProvider).reveal();
         HapticFeedback.mediumImpact();
       }
     });
@@ -62,8 +65,10 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
         : 0.0;
 
     return Scaffold(
-      body: SafeArea(
-        child: GlyphAtmosphere(
+      body: Stack(
+        children: [
+          SafeArea(
+            child: GlyphAtmosphere(
           intensity: ambient,
           child: Center(
           child: ConstrainedBox(
@@ -84,6 +89,13 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
           ),
         ),
         ),
+          ),
+          const Positioned(
+            top: 4,
+            right: 4,
+            child: SafeArea(child: _MuteButton()),
+          ),
+        ],
       ),
     );
   }
@@ -100,6 +112,7 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
       focus: _focus,
       bare: widget.bare,
       onSubmit: _submit,
+      onKeystroke: _keystroke,
     );
   }
 }
@@ -112,6 +125,7 @@ class _PuzzleView extends StatelessWidget {
   final FocusNode focus;
   final bool bare;
   final VoidCallback onSubmit;
+  final VoidCallback onKeystroke;
 
   const _PuzzleView({
     required this.node,
@@ -120,6 +134,7 @@ class _PuzzleView extends StatelessWidget {
     required this.focus,
     required this.bare,
     required this.onSubmit,
+    required this.onKeystroke,
   });
 
   @override
@@ -165,6 +180,7 @@ class _PuzzleView extends StatelessWidget {
             entry: entry,
             enabled: submission is! SubmissionSending,
             onSubmit: onSubmit,
+            onKeystroke: onKeystroke,
           ),
           const SizedBox(height: 16),
           _Feedback(submission: submission),
@@ -193,6 +209,7 @@ class _InputRow extends StatelessWidget {
   final NodeEntry entry;
   final bool enabled;
   final VoidCallback onSubmit;
+  final VoidCallback onKeystroke;
 
   const _InputRow({
     required this.controller,
@@ -200,6 +217,7 @@ class _InputRow extends StatelessWidget {
     required this.entry,
     required this.enabled,
     required this.onSubmit,
+    required this.onKeystroke,
   });
 
   @override
@@ -232,6 +250,7 @@ class _InputRow extends StatelessWidget {
               keyboardType:
                   numeric ? TextInputType.number : TextInputType.text,
               textInputAction: TextInputAction.send,
+              onChanged: (_) => onKeystroke(),
               onSubmitted: (_) => onSubmit(),
               cursorColor: c.accentSignal,
               style: Theme.of(context)
@@ -347,6 +366,25 @@ class _Revealed extends ConsumerWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Toggle de silencio discreto (esquina superior). No revela el puzzle.
+class _MuteButton extends ConsumerWidget {
+  const _MuteButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final on = ref.watch(soundEnabledProvider);
+    final l10n = AppL10n.of(context);
+    return IconButton(
+      onPressed: () => ref.read(soundEnabledProvider.notifier).toggle(),
+      icon: Icon(on ? Icons.volume_up_outlined : Icons.volume_off_outlined),
+      iconSize: 18,
+      color: context.c.inkDim,
+      tooltip: l10n.soundToggle,
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
     );
   }
 }

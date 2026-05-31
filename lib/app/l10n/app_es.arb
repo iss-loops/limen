@@ -31,5 +31,8 @@
   "@answerFieldLabel": { "description": "Etiqueta accesible del campo de respuesta." },
 
   "decodingLabel": "descifrando",
-  "@decodingLabel": { "description": "Etiqueta accesible mientras el texto se revela." }
+  "@decodingLabel": { "description": "Etiqueta accesible mientras el texto se revela." },
+
+  "soundToggle": "sonido",
+  "@soundToggle": { "description": "Etiqueta accesible del botón de silencio." }
 }

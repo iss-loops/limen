@@ -158,6 +158,12 @@ abstract class AppL10n {
   /// In es, this message translates to:
   /// **'descifrando'**
   String get decodingLabel;
+
+  /// Etiqueta accesible del botón de silencio.
+  ///
+  /// In es, this message translates to:
+  /// **'sonido'**
+  String get soundToggle;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
