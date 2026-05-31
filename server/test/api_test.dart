@@ -35,6 +35,12 @@ void main() {
     return (await jsonOf(res))['data']['token'] as String;
   }
 
+  test('GET /healthz responde 200 (health check de deploy)', () async {
+    final res = await api(get('/healthz'));
+    expect(res.statusCode, 200);
+    expect((await jsonOf(res))['data']['status'], 'ok');
+  });
+
   test('POST /session devuelve un token', () async {
     final res = await api(post('/api/v1/session'));
     expect(res.statusCode, 200);

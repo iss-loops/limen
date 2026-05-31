@@ -1,0 +1,10 @@
+# Blueprint de Render para el backend de LIMEN.
+# En Render: New → Blueprint → conecta este repo → Apply.
+services:
+  - type: web
+    name: limen
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /healthz
+    autoDeploy: true

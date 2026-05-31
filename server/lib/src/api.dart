@@ -25,6 +25,7 @@ class AppState {
 /// Construye el handler de la API v1, con CORS para correr en Flutter web.
 Handler buildApi(AppState state) {
   final router = Router()
+    ..get('/healthz', (Request req) => _ok({'status': 'ok'}))
     ..post('/api/v1/session', (Request req) => _session(state))
     ..get('/api/v1/node/<id>', (Request req, String id) => _node(state, req, id))
     ..post('/api/v1/submit', (Request req) => _submit(state, req));
