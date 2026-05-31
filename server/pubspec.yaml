@@ -1,0 +1,17 @@
+name: limen_server
+description: Backend ligero de LIMEN en Dart (shelf). Autoridad de validación server-side. Comparte limen_domain.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  shelf: 1.4.2
+  shelf_router: 1.1.4
+  limen_domain:
+    path: ../packages/limen_domain
+
+dev_dependencies:
+  test: 1.25.8
+  lints: 4.0.0
