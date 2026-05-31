@@ -3,6 +3,12 @@
 El server es un binario Dart AOT en un contenedor (`Dockerfile`, contexto = raíz
 del repo). Lee `PORT` del entorno y escucha en `0.0.0.0`. Verificado localmente.
 
+## 🟢 Desplegado (Render, free)
+
+- **URL:** https://limen-bt36.onrender.com
+- Repo: github.com/iss-loops/limen (blueprint `render.yaml`, autodeploy en push a `main`).
+- El plan free duerme tras ~15 min inactivo (~50s en despertar la 1ª petición).
+
 ## Opción A — Railway (CLI ya instalada)
 
 ```bash

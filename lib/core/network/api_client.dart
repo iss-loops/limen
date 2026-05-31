@@ -95,8 +95,9 @@ class LimenApiClient implements LimenGateway {
 Dio buildDio() => Dio(
       BaseOptions(
         baseUrl: kApiBaseUrl,
-        connectTimeout: const Duration(seconds: 8),
-        receiveTimeout: const Duration(seconds: 8),
+        // Holgado: el plan free de Render duerme y tarda ~50s en despertar.
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
         contentType: 'application/json',
         // Leemos los envelopes de error nosotros mismos.
         validateStatus: (_) => true,
