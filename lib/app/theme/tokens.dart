@@ -89,6 +89,17 @@ extension LimenThemeX on BuildContext {
 /// Familia mono empaquetada (offline; sin google_fonts en runtime).
 const String kMonoFamily = 'JetBrainsMono';
 
+/// Familia cursiva para el título-firma (estética Liquid Glass).
+const String kCursiveFamily = 'Caveat';
+
+/// Fondos fotográficos (estética Coldplay / Liquid Glass).
+abstract final class Backgrounds {
+  static const spheres = 'assets/backgrounds/spheres.jpg';
+  static const waves = 'assets/backgrounds/waves.jpg';
+  static const glints = 'assets/backgrounds/glints.jpg';
+  static const coldplay = 'assets/backgrounds/coldplay.jpg';
+}
+
 /// Halo fósforo sutil para el acento de terminal — efecto clave del design
 /// system ("minimal glow, text-shadow 0 0 10px"). Estático: válido también con
 /// reduce motion (color/profundidad sin movimiento).

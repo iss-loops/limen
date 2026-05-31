@@ -10,8 +10,7 @@ import '../../../core/audio/sound_controller.dart';
 import '../../../core/widgets/arc_progress.dart';
 import '../../../core/widgets/block_cursor.dart';
 import '../../../core/widgets/decode_text.dart';
-import '../../../core/widgets/glyph_atmosphere.dart';
-import '../../../core/widgets/pressable_scale.dart';
+import '../../../core/widgets/liquid_glass.dart';
 import '../../session/session_controller.dart';
 import '../application/node_provider.dart';
 import '../application/progress_controller.dart';
@@ -61,54 +60,57 @@ class _PuzzleScreenState extends ConsumerState<PuzzleScreen> {
     final nodeAsync = ref.watch(nodeProvider(widget.nodeId));
     final l10n = AppL10n.of(context);
 
-    // La atmósfera glyph sube en el reveal y llega a su pico en el cierre.
-    final submission = ref.watch(submitProvider(widget.nodeId));
-    final ambient = (submission is SubmissionDone && submission.result.correct)
-        ? (submission.result.nextNodeId == null ? 1.0 : 0.55)
-        : 0.0;
-
     return Scaffold(
-      body: Stack(
-        children: [
-          SafeArea(
-            child: GlyphAtmosphere(
-          intensity: ambient,
-          child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: nodeAsync.when(
-                loading: () => _SystemLine(l10n.loading),
-                error: (err, _) {
-                  final locked = err is NodeException &&
-                      err.code == ApiErrorCode.nodeLocked;
-                  return _ErrorState(
-                    message: locked ? l10n.nodeLocked : l10n.networkDown,
-                    onRetry: locked
-                        ? null
-                        : () {
-                            ref.invalidate(sessionProvider);
-                            ref.invalidate(nodeProvider(widget.nodeId));
-                          },
-                  );
-                },
-                data: (node) => _content(node, l10n),
+      body: PhotoBackdrop(
+        asset: _backgroundFor(widget.nodeId),
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    child: nodeAsync.when(
+                      loading: () => _SystemLine(l10n.loading),
+                      error: (err, _) {
+                        final locked = err is NodeException &&
+                            err.code == ApiErrorCode.nodeLocked;
+                        return _ErrorState(
+                          message: locked ? l10n.nodeLocked : l10n.networkDown,
+                          onRetry: locked
+                              ? null
+                              : () {
+                                  ref.invalidate(sessionProvider);
+                                  ref.invalidate(nodeProvider(widget.nodeId));
+                                },
+                        );
+                      },
+                      data: (node) => _content(node, l10n),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+            const Positioned(
+              top: 4,
+              right: 4,
+              child: SafeArea(child: _MuteButton()),
+            ),
+          ],
         ),
-        ),
-          ),
-          const Positioned(
-            top: 4,
-            right: 4,
-            child: SafeArea(child: _MuteButton()),
-          ),
-        ],
       ),
     );
   }
+
+  /// Un fondo fotográfico por nodo (variedad tipo "álbum").
+  String _backgroundFor(String nodeId) => switch (nodeId) {
+        'node0' => Backgrounds.glints,
+        'node1' => Backgrounds.waves,
+        'node2' => Backgrounds.spheres,
+        _ => Backgrounds.waves,
+      };
 
   Widget _content(NodeContent node, AppL10n l10n) {
     final submission = ref.watch(submitProvider(widget.nodeId));
@@ -178,59 +180,58 @@ class _PuzzleView extends StatelessWidget {
                   child: IconButton(
                     onPressed: () => context.push('/map'),
                     icon: const Icon(Icons.hub_outlined),
-                    iconSize: 18,
-                    color: c.inkDim,
+                    iconSize: 20,
+                    color: Colors.white,
                     visualDensity: VisualDensity.compact,
                     constraints:
                         const BoxConstraints(minWidth: 44, minHeight: 44),
                   ),
                 ),
                 const SizedBox(width: 4),
-                Text('LIMEN',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge
-                        ?.copyWith(color: c.inkDim)),
+                const Wordmark(size: 34),
                 const Spacer(),
                 const ArcProgress(),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           ] else
-            const SizedBox(height: 8),
-          DecodeText(
-            body,
-            intensity: intensity,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: accent),
-          ),
-          const SizedBox(height: 36),
-          _InputRow(
-            controller: controller,
-            focus: focus,
-            entry: entry,
-            enabled: submission is! SubmissionSending,
-            onSubmit: onSubmit,
-            onKeystroke: onKeystroke,
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Wordmark(size: 54),
+            ),
+          LiquidGlass(
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DecodeText(
+                  body,
+                  intensity: intensity,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: accent),
+                ),
+                const SizedBox(height: 28),
+                _InputRow(
+                  controller: controller,
+                  focus: focus,
+                  entry: entry,
+                  enabled: submission is! SubmissionSending,
+                  onSubmit: onSubmit,
+                  onKeystroke: onKeystroke,
+                ),
+                const SizedBox(height: 12),
+                _Feedback(submission: submission),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
-          _Feedback(submission: submission),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: PressableScale(
-              child: TextButton(
-                onPressed: submission is SubmissionSending ? null : onSubmit,
-                style: TextButton.styleFrom(
-                  foregroundColor: c.accentSignal,
-                  minimumSize: const Size(48, 48),
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                ),
-                child: Text(
-                  l10n.submitAction,
-                  style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
-                ),
-              ),
-            ),
+          GlassButton(
+            label: l10n.submitAction,
+            color: c.accentSignal,
+            onTap: submission is SubmissionSending ? null : onSubmit,
           ),
         ],
       ),
@@ -364,51 +365,41 @@ class _Revealed extends ConsumerWidget {
             children: [
               DecoratedBox(
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: c.accentGlyph.withOpacity(0.35),
-                      blurRadius: 36,
-                      spreadRadius: 2,
+                      color: c.accentGlyph.withOpacity(0.45),
+                      blurRadius: 48,
+                      spreadRadius: 4,
                     ),
                   ],
                 ),
-                child: DecodeText(
-                  narrative,
-                  intensity: closing ? 1.0 : 0.6,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: c.accentGlyph,
-                        height: 1.5,
-                      ),
+                child: LiquidGlass(
+                  padding: const EdgeInsets.all(24),
+                  child: DecodeText(
+                    narrative,
+                    intensity: closing ? 1.0 : 0.6,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: c.accentGlyph,
+                          height: 1.5,
+                        ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               if (closing)
-                PressableScale(
-                  child: TextButton(
-                    onPressed: () {
-                      ref.read(progressProvider.notifier).reset();
-                      context.go('/');
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: c.inkDim,
-                      minimumSize: const Size(48, 48),
-                    ),
-                    child: Text(l10n.restartAction),
-                  ),
+                GlassButton(
+                  label: l10n.restartAction,
+                  onTap: () {
+                    ref.read(progressProvider.notifier).reset();
+                    context.go('/');
+                  },
                 )
               else
-                PressableScale(
-                  child: TextButton(
-                    onPressed: () => context.go('/node/${result.nextNodeId}'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: c.accentSignal,
-                      minimumSize: const Size(48, 48),
-                    ),
-                    child: Text(
-                      l10n.continueAction,
-                      style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
-                    ),
-                  ),
+                GlassButton(
+                  label: l10n.continueAction,
+                  color: c.accentSignal,
+                  onTap: () => context.go('/node/${result.nextNodeId}'),
                 ),
             ],
           ),
@@ -449,34 +440,29 @@ class _ErrorState extends StatelessWidget {
     final c = context.c;
     final l10n = AppL10n.of(context);
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(color: c.accentAlert),
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 24),
-            PressableScale(
-              child: TextButton(
-                onPressed: onRetry,
-                style: TextButton.styleFrom(
-                  foregroundColor: c.accentSignal,
-                  minimumSize: const Size(48, 48),
-                ),
-                child: Text(
-                  l10n.retryAction,
-                  style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
-                ),
-              ),
+      child: LiquidGlass(
+        padding: const EdgeInsets.all(22),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: c.accentAlert),
             ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 20),
+              GlassButton(
+                label: l10n.retryAction,
+                color: c.accentSignal,
+                onTap: onRetry,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -490,12 +476,15 @@ class _SystemLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        text,
-        style: Theme.of(context)
-            .textTheme
-            .bodyLarge
-            ?.copyWith(color: context.c.inkDim),
+      child: LiquidGlass(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+        child: Text(
+          text,
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(color: Colors.white),
+        ),
       ),
     );
   }

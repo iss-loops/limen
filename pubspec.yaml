@@ -71,6 +71,7 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/backgrounds/
 
   fonts:
     - family: JetBrainsMono
@@ -80,3 +81,6 @@ flutter:
           weight: 500
         - asset: assets/fonts/JetBrainsMono-Bold.ttf
           weight: 700
+    - family: Caveat
+      fonts:
+        - asset: assets/fonts/Caveat.ttf
