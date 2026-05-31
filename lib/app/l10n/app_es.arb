@@ -1,0 +1,35 @@
+{
+  "@@locale": "es",
+  "appTitle": "LIMEN",
+  "@appTitle": { "description": "Nombre del producto." },
+
+  "submitAction": "enviar",
+  "@submitAction": { "description": "Acción para enviar una respuesta." },
+
+  "continueAction": "continuar",
+  "@continueAction": { "description": "Avanzar al siguiente nodo." },
+
+  "restartAction": "volver al umbral",
+  "@restartAction": { "description": "Reiniciar el recorrido del demo." },
+
+  "wrongAnswer": "la señal no reconoce eso.",
+  "@wrongAnswer": { "description": "Feedback de respuesta incorrecta (voz del sistema)." },
+
+  "networkDown": "la señal no llega.",
+  "@networkDown": { "description": "Sin conexión con el servidor." },
+
+  "sessionError": "el umbral no responde.",
+  "@sessionError": { "description": "Fallo al abrir sesión." },
+
+  "nodeLocked": "aún no es tu turno.",
+  "@nodeLocked": { "description": "Intento de acceder a un nodo bloqueado." },
+
+  "loading": "escuchando…",
+  "@loading": { "description": "Estado de carga." },
+
+  "answerFieldLabel": "tu respuesta",
+  "@answerFieldLabel": { "description": "Etiqueta accesible del campo de respuesta." },
+
+  "decodingLabel": "descifrando",
+  "@decodingLabel": { "description": "Etiqueta accesible mientras el texto se revela." }
+}
