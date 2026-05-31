@@ -172,6 +172,20 @@ class _PuzzleView extends StatelessWidget {
           if (!bare) ...[
             Row(
               children: [
+                Semantics(
+                  button: true,
+                  label: l10n.mapOpen,
+                  child: IconButton(
+                    onPressed: () => context.push('/map'),
+                    icon: const Icon(Icons.hub_outlined),
+                    iconSize: 18,
+                    color: c.inkDim,
+                    visualDensity: VisualDensity.compact,
+                    constraints:
+                        const BoxConstraints(minWidth: 44, minHeight: 44),
+                  ),
+                ),
+                const SizedBox(width: 4),
                 Text('LIMEN',
                     style: Theme.of(context)
                         .textTheme
@@ -181,7 +195,7 @@ class _PuzzleView extends StatelessWidget {
                 const ArcProgress(),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
           ] else
             const SizedBox(height: 8),
           DecodeText(

@@ -49,4 +49,39 @@ class AppL10nEs extends AppL10n {
   String arcProgress(int done, int total) {
     return 'progreso: $done de $total';
   }
+
+  @override
+  String get loginPrompt => 'te encontraron. ¿cómo te nombrarán los que observan?';
+
+  @override
+  String get aliasFieldLabel => 'tu alias';
+
+  @override
+  String get aliasHint => 'alias';
+
+  @override
+  String get enterAction => 'cruzar';
+
+  @override
+  String get mapTitle => 'el arco';
+
+  @override
+  String get mapOpen => 'mapa del arco';
+
+  @override
+  String get backAction => 'volver';
+
+  @override
+  String nodeLabel(String n) {
+    return 'nodo $n';
+  }
+
+  @override
+  String get stateSolved => 'resuelto';
+
+  @override
+  String get stateAvailable => 'disponible';
+
+  @override
+  String get stateSealed => 'sellado';
 }

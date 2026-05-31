@@ -176,6 +176,72 @@ abstract class AppL10n {
   /// In es, this message translates to:
   /// **'progreso: {done} de {total}'**
   String arcProgress(int done, int total);
+
+  /// Voz del sistema en la entrada de alias.
+  ///
+  /// In es, this message translates to:
+  /// **'te encontraron. ¿cómo te nombrarán los que observan?'**
+  String get loginPrompt;
+
+  /// Etiqueta accesible del campo de alias.
+  ///
+  /// In es, this message translates to:
+  /// **'tu alias'**
+  String get aliasFieldLabel;
+
+  /// Placeholder del campo de alias.
+  ///
+  /// In es, this message translates to:
+  /// **'alias'**
+  String get aliasHint;
+
+  /// Acción para entrar tras elegir alias.
+  ///
+  /// In es, this message translates to:
+  /// **'cruzar'**
+  String get enterAction;
+
+  /// Título de la pantalla de mapa del arco.
+  ///
+  /// In es, this message translates to:
+  /// **'el arco'**
+  String get mapTitle;
+
+  /// Etiqueta accesible del botón que abre el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'mapa del arco'**
+  String get mapOpen;
+
+  /// Etiqueta accesible del botón de regreso.
+  ///
+  /// In es, this message translates to:
+  /// **'volver'**
+  String get backAction;
+
+  /// Etiqueta de un nodo en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'nodo {n}'**
+  String nodeLabel(String n);
+
+  /// Estado de un nodo resuelto.
+  ///
+  /// In es, this message translates to:
+  /// **'resuelto'**
+  String get stateSolved;
+
+  /// Estado de un nodo desbloqueado.
+  ///
+  /// In es, this message translates to:
+  /// **'disponible'**
+  String get stateAvailable;
+
+  /// Estado de un nodo bloqueado.
+  ///
+  /// In es, this message translates to:
+  /// **'sellado'**
+  String get stateSealed;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

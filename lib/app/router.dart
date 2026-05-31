@@ -2,16 +2,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/arc_map/arc_map_screen.dart';
 import '../features/puzzle/application/progress_controller.dart';
 import '../features/puzzle/domain/arc.dart';
 import '../features/puzzle/presentation/puzzle_screen.dart';
+import '../features/session/alias_controller.dart';
+import '../features/session/login_screen.dart';
 
-/// Router declarativo con guard de desbloqueo: no se puede navegar a un nodo
-/// que el progreso (cliente) no tiene desbloqueado. El servidor reconfirma.
+/// Router declarativo con guards: gate de alias + desbloqueo de nodos. El
+/// servidor reconfirma la autorización de cada nodo.
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     routes: [
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) =>
+            _ceremonialFade(state, const LoginScreen()),
+      ),
       GoRoute(
         path: '/',
         pageBuilder: (context, state) => _ceremonialFade(
@@ -26,12 +34,29 @@ final routerProvider = Provider<GoRouter>((ref) {
           PuzzleScreen(nodeId: state.pathParameters['id']!),
         ),
       ),
+      GoRoute(
+        path: '/map',
+        pageBuilder: (context, state) =>
+            _ceremonialFade(state, const ArcMapScreen()),
+      ),
     ],
     redirect: (context, state) {
-      if (!state.uri.path.startsWith('/node/')) return null;
-      final id = state.pathParameters['id'];
-      if (id == kEntryNodeId) return '/';
-      if (id != null && !ref.read(progressProvider).isUnlocked(id)) return '/';
+      final alias = ref.read(aliasProvider);
+      final hasAlias = alias != null && alias.isNotEmpty;
+      final loc = state.uri.path;
+
+      // Gate de alias: sin alias, todo lleva a /login.
+      if (!hasAlias) return loc == '/login' ? null : '/login';
+      if (loc == '/login') return '/';
+
+      // Guard de desbloqueo de nodos.
+      if (loc.startsWith('/node/')) {
+        final id = state.pathParameters['id'];
+        if (id == kEntryNodeId) return '/';
+        if (id != null && !ref.read(progressProvider).isUnlocked(id)) {
+          return '/';
+        }
+      }
       return null;
     },
   );

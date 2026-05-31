@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iss/app/l10n/app_localizations.dart';
 import 'package:iss/app/theme/theme.dart';
+import 'package:iss/core/audio/sound_controller.dart';
 import 'package:iss/core/network/api_client.dart';
 import 'package:iss/core/providers.dart';
 import 'package:iss/core/storage/session_storage.dart';
@@ -54,6 +55,17 @@ class _FakeApi extends LimenApiClient {
   }
 }
 
+/// Silencia el audio en tests (no toca el plugin de plataforma).
+class _SilentSound extends SoundController {
+  _SilentSound(super.ref);
+  @override
+  Future<void> reveal() async {}
+  @override
+  Future<void> keystroke() async {}
+  @override
+  void dispose() {}
+}
+
 void main() {
   testWidgets('resolver el nodo dispara el decode reveal de la narrativa',
       (tester) async {
@@ -62,6 +74,7 @@ void main() {
         overrides: [
           gatewayProvider.overrideWithValue(_FakeApi()),
           sessionStorageProvider.overrideWithValue(_FakeStorage()),
+          soundControllerProvider.overrideWith((ref) => _SilentSound(ref)),
         ],
         child: MaterialApp(
           theme: buildLimenTheme(),

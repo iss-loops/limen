@@ -42,12 +42,28 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutter_native_splash: ^2.4.1
+  flutter_launcher_icons: ^0.14.1
 
 # Splash oscuro (bg.void) para matar el flash blanco al abrir.
 flutter_native_splash:
   color: "#0A0A0C"
   android_12:
     color: "#0A0A0C"
+
+# Ícono de launcher: el mark del umbral sobre void.
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#0A0A0C"
+  adaptive_icon_foreground: "assets/icon/foreground.png"
+  web:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    background_color: "#0A0A0C"
+    theme_color: "#0A0A0C"
 
 flutter:
   uses-material-design: true

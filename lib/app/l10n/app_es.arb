@@ -46,5 +46,41 @@
       "done": { "type": "int" },
       "total": { "type": "int" }
     }
-  }
+  },
+
+  "loginPrompt": "te encontraron. ¿cómo te nombrarán los que observan?",
+  "@loginPrompt": { "description": "Voz del sistema en la entrada de alias." },
+
+  "aliasFieldLabel": "tu alias",
+  "@aliasFieldLabel": { "description": "Etiqueta accesible del campo de alias." },
+
+  "aliasHint": "alias",
+  "@aliasHint": { "description": "Placeholder del campo de alias." },
+
+  "enterAction": "cruzar",
+  "@enterAction": { "description": "Acción para entrar tras elegir alias." },
+
+  "mapTitle": "el arco",
+  "@mapTitle": { "description": "Título de la pantalla de mapa del arco." },
+
+  "mapOpen": "mapa del arco",
+  "@mapOpen": { "description": "Etiqueta accesible del botón que abre el mapa." },
+
+  "backAction": "volver",
+  "@backAction": { "description": "Etiqueta accesible del botón de regreso." },
+
+  "nodeLabel": "nodo {n}",
+  "@nodeLabel": {
+    "description": "Etiqueta de un nodo en el mapa.",
+    "placeholders": { "n": { "type": "String" } }
+  },
+
+  "stateSolved": "resuelto",
+  "@stateSolved": { "description": "Estado de un nodo resuelto." },
+
+  "stateAvailable": "disponible",
+  "@stateAvailable": { "description": "Estado de un nodo desbloqueado." },
+
+  "stateSealed": "sellado",
+  "@stateSealed": { "description": "Estado de un nodo bloqueado." }
 }
