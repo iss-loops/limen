@@ -1,0 +1,22 @@
+# Solo necesitamos packages/ y server/ para el build del backend.
+.git/
+.claude/
+.dart_tool/
+**/.dart_tool/
+build/
+**/build/
+.idea/
+.vscode/
+
+# App Flutter y plataformas: no son parte del server.
+lib/
+test/
+integration_test/
+assets/
+android/
+ios/
+web/
+windows/
+macos/
+linux/
+RESPUESTAS-DEMO.txt
