@@ -20,7 +20,7 @@ class SessionController extends AsyncNotifier<String> {
     final existing = await storage.readToken();
     if (existing != null) return existing;
 
-    final api = ref.read(apiClientProvider);
+    final api = ref.read(gatewayProvider);
     final res = await api.createSession();
     switch (res) {
       case Ok(:final value):

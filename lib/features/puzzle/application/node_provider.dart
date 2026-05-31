@@ -17,7 +17,7 @@ class NodeException implements Exception {
 /// El payload se cachea por Riverpod para lectura del nodo actual.
 final nodeProvider = FutureProvider.family<NodeContent, String>((ref, id) async {
   final token = await ref.watch(sessionProvider.future);
-  final api = ref.read(apiClientProvider);
+  final api = ref.read(gatewayProvider);
   final res = await api.getNode(token, id);
   switch (res) {
     case Ok(:final value):

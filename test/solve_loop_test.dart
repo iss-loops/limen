@@ -60,7 +60,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          apiClientProvider.overrideWithValue(_FakeApi()),
+          gatewayProvider.overrideWithValue(_FakeApi()),
           sessionStorageProvider.overrideWithValue(_FakeStorage()),
         ],
         child: MaterialApp(

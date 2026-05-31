@@ -47,7 +47,7 @@ class SubmitController extends FamilyNotifier<SubmissionState, String> {
       return;
     }
 
-    final api = ref.read(apiClientProvider);
+    final api = ref.read(gatewayProvider);
     final res = await api.submit(token, SubmitRequest(nodeId: arg, answer: rawAnswer));
 
     switch (res) {

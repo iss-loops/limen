@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:limen_domain/limen_domain.dart';
 
+import 'limen_gateway.dart';
+
 /// Base de la API. Override en build:  --dart-define=LIMEN_API=https://...
 const String kApiBaseUrl = String.fromEnvironment(
   'LIMEN_API',
@@ -14,11 +16,12 @@ const String kNetworkErrorCode = 'NETWORK';
 ///
 /// La validación es siempre server-side: este cliente nunca decide si una
 /// respuesta es correcta, solo transporta.
-class LimenApiClient {
+class LimenApiClient implements LimenGateway {
   final Dio _dio;
 
   LimenApiClient(this._dio);
 
+  @override
   Future<Result<String>> createSession() => _guard(() async {
         final res = await _dio.post<Map<String, dynamic>>('/session');
         final env = _envelope(res);
@@ -28,6 +31,7 @@ class LimenApiClient {
         );
       });
 
+  @override
   Future<Result<NodeContent>> getNode(String token, String id) =>
       _guard(() async {
         final res = await _dio.get<Map<String, dynamic>>(
@@ -41,6 +45,7 @@ class LimenApiClient {
         );
       });
 
+  @override
   Future<Result<SubmitResult>> submit(String token, SubmitRequest req) =>
       _guard(() async {
         final res = await _dio.post<Map<String, dynamic>>(
