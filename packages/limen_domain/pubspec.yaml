@@ -1,0 +1,14 @@
+name: limen_domain
+description: Lógica de dominio compartida de LIMEN (validación, normalización, grafo). Sin Flutter, sin servidor. Nunca contiene soluciones.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  crypto: 3.0.6
+
+dev_dependencies:
+  test: 1.25.8
+  lints: 4.0.0
