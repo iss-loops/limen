@@ -37,7 +37,13 @@ class _BlockCursorState extends State<BlockCursor>
     final block = Container(
       width: widget.width,
       height: widget.height,
-      color: widget.color,
+      decoration: BoxDecoration(
+        color: widget.color,
+        // Halo fósforo: el cursor "emite" como una terminal vieja.
+        boxShadow: [
+          BoxShadow(color: widget.color.withOpacity(0.6), blurRadius: 8),
+        ],
+      ),
     );
     if (reduceMotion) return block;
 

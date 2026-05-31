@@ -88,3 +88,9 @@ extension LimenThemeX on BuildContext {
 
 /// Familia mono empaquetada (offline; sin google_fonts en runtime).
 const String kMonoFamily = 'JetBrainsMono';
+
+/// Halo fósforo sutil para el acento de terminal — efecto clave del design
+/// system ("minimal glow, text-shadow 0 0 10px"). Estático: válido también con
+/// reduce motion (color/profundidad sin movimiento).
+List<Shadow> phosphorGlow(Color color, {double blur = 10}) =>
+    [Shadow(color: color.withOpacity(0.55), blurRadius: blur)];

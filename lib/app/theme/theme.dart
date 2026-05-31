@@ -35,6 +35,18 @@ ThemeData buildLimenTheme() {
       selectionColor: const Color(0x333DF5A8),
       selectionHandleColor: colors.accentSignal,
     ),
+    // Anillo de foco visible solo con teclado (a11y focus-states); no afecta el
+    // look táctil.
+    focusColor: colors.accentSignal.withOpacity(0.18),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        side: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.focused)
+              ? BorderSide(color: colors.accentSignal, width: 2)
+              : null,
+        ),
+      ),
+    ),
     extensions: const [colors],
   );
 }

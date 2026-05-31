@@ -10,6 +10,7 @@ import '../../../core/audio/sound_controller.dart';
 import '../../../core/widgets/block_cursor.dart';
 import '../../../core/widgets/decode_text.dart';
 import '../../../core/widgets/glyph_atmosphere.dart';
+import '../../../core/widgets/pressable_scale.dart';
 import '../application/node_provider.dart';
 import '../application/progress_controller.dart';
 import '../application/submit_controller.dart';
@@ -187,14 +188,19 @@ class _PuzzleView extends StatelessWidget {
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerLeft,
-            child: TextButton(
-              onPressed: submission is SubmissionSending ? null : onSubmit,
-              style: TextButton.styleFrom(
-                foregroundColor: c.accentSignal,
-                minimumSize: const Size(48, 48),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: PressableScale(
+              child: TextButton(
+                onPressed: submission is SubmissionSending ? null : onSubmit,
+                style: TextButton.styleFrom(
+                  foregroundColor: c.accentSignal,
+                  minimumSize: const Size(48, 48),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                child: Text(
+                  l10n.submitAction,
+                  style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
+                ),
               ),
-              child: Text(l10n.submitAction),
             ),
           ),
         ],
@@ -234,10 +240,10 @@ class _InputRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text('> ',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(color: c.accentSignal)),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: c.accentSignal,
+                  shadows: phosphorGlow(c.accentSignal),
+                )),
         Expanded(
           child: Semantics(
             label: l10n.answerFieldLabel,
@@ -318,53 +324,66 @@ class _Revealed extends ConsumerWidget {
     final closing = result.nextNodeId == null;
     final narrative = result.narrative ?? '';
 
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: c.accentGlyph.withOpacity(0.35),
-                  blurRadius: 36,
-                  spreadRadius: 2,
+    // Scrollable + centrado: aguanta Dynamic Type grande sin desbordar.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: c.accentGlyph.withOpacity(0.35),
+                      blurRadius: 36,
+                      spreadRadius: 2,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: DecodeText(
-              narrative,
-              intensity: closing ? 1.0 : 0.6,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: c.accentGlyph,
-                    height: 1.5,
+                child: DecodeText(
+                  narrative,
+                  intensity: closing ? 1.0 : 0.6,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: c.accentGlyph,
+                        height: 1.5,
+                      ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              if (closing)
+                PressableScale(
+                  child: TextButton(
+                    onPressed: () {
+                      ref.read(progressProvider.notifier).reset();
+                      context.go('/');
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: c.inkDim,
+                      minimumSize: const Size(48, 48),
+                    ),
+                    child: Text(l10n.restartAction),
                   ),
-            ),
+                )
+              else
+                PressableScale(
+                  child: TextButton(
+                    onPressed: () => context.go('/node/${result.nextNodeId}'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: c.accentSignal,
+                      minimumSize: const Size(48, 48),
+                    ),
+                    child: Text(
+                      l10n.continueAction,
+                      style: TextStyle(shadows: phosphorGlow(c.accentSignal)),
+                    ),
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 40),
-          if (closing)
-            TextButton(
-              onPressed: () {
-                ref.read(progressProvider.notifier).reset();
-                context.go('/');
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: c.inkDim,
-                minimumSize: const Size(48, 48),
-              ),
-              child: Text(l10n.restartAction),
-            )
-          else
-            TextButton(
-              onPressed: () => context.go('/node/${result.nextNodeId}'),
-              style: TextButton.styleFrom(
-                foregroundColor: c.accentSignal,
-                minimumSize: const Size(48, 48),
-              ),
-              child: Text(l10n.continueAction),
-            ),
-        ],
+        ),
       ),
     );
   }
