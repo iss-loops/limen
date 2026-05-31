@@ -1,0 +1,53 @@
+name: iss
+description: "LIMEN — demo vertical slice del Arco 0 (app Flutter)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Dominio compartido (validación/normalización/grafo). Path dep: Dart 3.5.4
+  # no soporta `resolution: workspace` (necesita 3.6+).
+  limen_domain:
+    path: packages/limen_domain
+
+  # Estado (Riverpod 2.x con Notifiers escritos a mano — sin codegen).
+  flutter_riverpod: ^2.5.1
+
+  # Routing declarativo con guards de desbloqueo
+  go_router: ^14.2.7
+
+  # Red
+  dio: ^5.7.0
+
+  # Sesión anónima
+  flutter_secure_storage: ^9.2.2
+
+  # i18n
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  fonts:
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
