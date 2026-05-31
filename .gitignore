@@ -1,6 +1,9 @@
 # Local tooling / agent config
 .claude/
 
+# Hoja de respuestas (spoilers) — no versionar
+RESPUESTAS-DEMO.txt
+
 # Miscellaneous
 *.class
 *.log
